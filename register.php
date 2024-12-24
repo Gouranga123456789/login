@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -20,14 +19,14 @@
         $servername="localhost";
         $database="bms";
 
-        $db=mysqli_connect('localhost','root','test','bms');
+        $db=mysqli_connect('localhost','root','','bms');
 
         if (!$db){
             die("sorry we failed to connect: ".mysqli_connect_error());
         }
         else{
 
-            $sql="INSERT INTO `users` (`username`, `email`, `password`) VALUES ('$username', '$email', '$password');";
+            $sql="INSERT INTO users (username, email, password) VALUES ('$username', '$email', '$password');";
             $result=mysqli_query($db,$sql);
             if($result){
                 echo "Successfully submited<br>Now login";
@@ -73,4 +72,4 @@
         </div>
     </center>    
 </body>
-</html>
+</html>                            
