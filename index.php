@@ -1,9 +1,29 @@
 <?php
 session_start();
+$db = mysqli_connect('localhost', 'root', '', 'bms');
 
-if(!isset($_SESSION['loggedin']) || $_SESSION['loggedin']!=true){
-    header("location: login.php");
-    exit;
+// Check for connection error
+if (!$db) {
+    die("Connection failed: " . mysqli_connect_error());
+}
+if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
+    header("location: login.php"); // Redirect to login page if not logged in
+    exit();
+}
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    // Get form data
+    $name = mysqli_real_escape_string($db, $_POST['name']);
+    $email = mysqli_real_escape_string($db, $_POST['email']);
+    $message = mysqli_real_escape_string($db, $_POST['message']);
+
+    // Insert data into 'contacts' table
+    $sql = "INSERT INTO contacts (name, email, message) VALUES ('$name', '$email', '$message')";
+
+    if (mysqli_query($db, $sql)) {
+        echo "<p style='color: green;'>Your message has been sent successfully!</p>";
+    } else {
+        echo "<p style='color: red;'>Error: " . mysqli_error($db) . "</p>";
+    }
 }
 ?>
 <!DOCTYPE html>
@@ -36,7 +56,6 @@ if(!isset($_SESSION['loggedin']) || $_SESSION['loggedin']!=true){
                 </div>
             </div>
             <div class="nav-items"><a href="#contact">Contact</a></div>
-            <div class="nav-items"><a href="login.php">Login</a></div>
             <div class="nav-items"><a href="logout.php">Logout</a></div>
         </nav>
     </header>
@@ -79,7 +98,7 @@ if(!isset($_SESSION['loggedin']) || $_SESSION['loggedin']!=true){
 
     <section id="contact" class="contact-section">
         <h2>Contact Us</h2>
-        <form class="contact-form">
+        <form method='post' action='index.php' class="contact-form">
             <label for="name" >Name:</label>
             <input type="text" placeholder="Enter your name" id="name" name="name" required>
             <label for="email">Email:</label>
